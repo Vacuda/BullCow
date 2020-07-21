@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include <map>
 #include "CoreMinimal.h"
 #include "Console/Cartridge.h"
 #include "BullCowCartridge.generated.h"
@@ -15,13 +14,18 @@ class BULLCOWGAME_API UBullCowCartridge : public UCartridge
 	public:
 	virtual void BeginPlay() override;
 	virtual void OnInput(const FString& Input) override;
-	void GameIntro();
-	void BuildDict();
+
+	//const
+	void const GameIntro();
+	void const AskRestartGame();
+	void const InfoList();
+	bool const bGameOverCheck();
+	bool const bIsIsogram(const FString& Input);
+
 	void InitializeNewGame();
-	void AskRestartGame();
-	void ListRemaining();
-	bool bGameOverCheck();
 	void GameOver();
+	void CalculateBullsCows(const FString& Input);
+	void ResetBullsCows();
 
 	// Your declarations go below!
 	private:
@@ -31,7 +35,7 @@ class BULLCOWGAME_API UBullCowCartridge : public UCartridge
     int32 Bulls;
     int32 RemainingAttempts;
 	bool bGameActive;
-	std::map<int32, FString> Dict;
+	TArray<FString> Words;
 
 
 };
