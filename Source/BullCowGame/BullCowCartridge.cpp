@@ -2,22 +2,22 @@
 #include "BullCowCartridge.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
-// #include <iostream>
-// #include <cstdlib>
-// #include <ctime>
-// #include <string>
 
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
 
-    // build WordList
+    // build Full Word List
+    TArray<FString> FullWordList;
     const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
-    FFileHelper::LoadFileToStringArray(Words, *WordListPath);
+    FFileHelper::LoadFileToStringArray(FullWordList, *WordListPath);
+
+    // build Filtered Word List
+    ValidWordList = FilterWordList(FullWordList);
+
 
     GameIntro();
     InitializeNewGame();
-
 
 
 }
@@ -90,12 +90,13 @@ void const UBullCowCartridge::GameIntro()
 
 void UBullCowCartridge::InitializeNewGame()
 {
-    HiddenWord = Words[rand() % Words.Num()];
+    // HiddenWord = ValidWordList[rand() % ValidWordList.Num()];
+    HiddenWord = ValidWordList[FMath::RandRange(0, ValidWordList.Num()-1)];
     Cows = 0;
     Bulls = 0;
     RemainingAttempts = HiddenWord.Len();
     bGameActive = true;
-    PrintLine(TEXT("The Hidden Word is %s"), *HiddenWord);
+    PrintLine(TEXT("The Hidden Word is: %s"), *HiddenWord);
     InfoList();
     PrintLine(TEXT("Enter Your Guess..."));
 }
@@ -187,6 +188,22 @@ void UBullCowCartridge::ResetBullsCows()
     Cows = 0;
 }
 
+TArray<FString> UBullCowCartridge::FilterWordList(const TArray<FString>& FullArray)
+{
+    TArray<FString> NewArr;
 
+    for(FString item : FullArray){
+        //if between 4 and 8 characters
+        if(item.Len()>= 4 && item.Len()<= 8){
+            //if isogram
+            if(bIsIsogram(item)){
+                //place into new array
+                NewArr.Emplace(item);
+            }
+        }
+    }
+
+    return NewArr;
+}
 
 
